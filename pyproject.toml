@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "python-web-api"
+version = "1.0.0"
+description = "A Web API Reference"
+authors = ["Randal Vance Cunanan <randal@randalvance.net>"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = {extras = ["all"], version = "^0.88.0"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
