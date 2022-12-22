@@ -1,21 +1,24 @@
-FROM python:3.10
+# https://fastapi.tiangolo.com/deployment/docker/#docker-image-with-poetry
+FROM python:3.10-slim as requirements-stage
 
-# Keeps Python from generating .pyc files in the container
-ENV PYTHONDONTWRITEBYTECODE 1
-# Turns off buffering for easier container logging
-ENV PYTHONUNBUFFERED 1
-
-WORKDIR /app
+WORKDIR /tmp
 
 RUN pip install poetry
 
-# Do not create a virtual environment since container has single app
-RUN poetry config virtualenvs.create false
+COPY ./pyproject.toml ./poetry.lock* /tmp/
 
-COPY src/ pyproject.toml poetry.toml poetry.lock .
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
 
-RUN poetry install --no-interaction
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY --from=requirements-stage /tmp/requirements.txt requirements.txt
+
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+
+COPY src/ .
 
 EXPOSE 8000
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8000"]
