@@ -2,19 +2,19 @@ version: "3.9"
 services:
   web:
     build: .
+    depends_on:
+      - db
     ports:
       - "8000:8000"
-  db:
-    image: postgres:14.1-alpine
-    restart: always
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: app
-    ports:
-      - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data/
+      DB_USER: postgres
+      DB_PASSWORD: postgres # Not a real password
+      DB_NAME: app
+      DB_SERVER: localhost
+  db:
+    extends:
+      file: docker-compose.db.yml
+      service: db
 volumes:
   db_data:
     driver: local

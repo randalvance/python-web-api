@@ -1,1 +1,10 @@
-Generic single-database configuration.
+# Commands
+
+1. Generate a new revision.
+    1. `alembic revision --autogenerate -m "message"`
+1. Upgrade to the latest revision.
+    1. `alembic upgrade head`
+1. Downgrade to the previous revision.
+    1. `alembic downgrade -1`
+1. Generate SQL
+    1. `alembic upgrade head --sql > upgrade.sql`
