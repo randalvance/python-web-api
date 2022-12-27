@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 from settings import appsettings
+from heroes import router as heroes_router
+
 
 app = FastAPI()
+
+app.include_router(heroes_router, prefix="/heroes")
 
 
 @app.get("/")
