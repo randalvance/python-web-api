@@ -1,4 +1,4 @@
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import jwt
 
@@ -6,10 +6,14 @@ from settings import appsettings
 
 
 class Authorize:
-    def __call__(self, token: HTTPAuthorizationCredentials = Depends(HTTPBearer())):
+    def __call__(self, token: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False))):
+        if token is None:
+            raise HTTPException(status_code=401, detail="Unauthorized")
+
         return self.verify(token.credentials)
 
-    def verify(self, token: str):
+    @staticmethod
+    def verify(token: str):
         jwks_url = f'https://{appsettings.AUTH_DOMAIN}/.well-known/jwks.json'
         jwks_client = jwt.PyJWKClient(jwks_url)
         try:
